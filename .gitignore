@@ -1,0 +1,13 @@
+# ignore private key files
+*.ppk
+*.pem
+
+# ignore lock files
+*.lock
+
+# ignore log files
+*.log
+*.log.data
+
+# ignore .project file created by IDE
+.project
