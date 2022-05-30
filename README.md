@@ -10,7 +10,11 @@ This library is used and extended by many others like:
 
 ## 1. Getting Started
 
+Install the gem.
 
+```bash
+gem install blackstack-nodes
+```
 
 ## 2. Connecting a Node Using Private-Key Files
 
@@ -88,7 +92,7 @@ The log of this command will be something like this:
 
 ## 3. Connecting a Node Using Password
 
-```
+```ruby
 # Example script of connecting to a server using ssh user and password; requesting server reboot; and waiting for server is up again.
 
 require 'simple_cloud_logging'
