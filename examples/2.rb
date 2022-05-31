@@ -1,7 +1,7 @@
 # Example script of connecting to a server using ssh user and password; requesting server reboot; and waiting for server is up again.
 
 require 'simple_cloud_logging'
-require_relative '../lib/blackstack-deployer'
+require 'blackstack-nodes'
 
 logger = BlackStack::BaseLogger.new(nil)
 

@@ -1,6 +1,7 @@
 # Example script of connecting to an AWS/EC2 instance using a key file; and running a command.
 
-require_relative '../lib/blackstack-deployer'
+require 'blackstack-nodes'
+
 n = BlackStack::Infrastructure::Node.new(
     :net_remote_ip => '54.160.137.218',  
     :ssh_username => 'ubuntu',
