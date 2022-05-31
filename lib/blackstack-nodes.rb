@@ -6,6 +6,9 @@ module BlackStack
   module Infrastructure
     # this module has attributes an methods used by both classes Node and Node.
     module NodeModule
+      # :name is this is just a descriptive name for the node. It is not the host name, nor the domain, nor any ip. 
+      attr_accessor :name, :net_remote_ip, :ssh_username, :ssh_password, :ssh_port, :ssh_private_key_file
+      # non-database attributes, used for ssh connection and logging
       attr_accessor :ssh, :logger
 
       def self.descriptor_errors(h)
@@ -13,6 +16,15 @@ module BlackStack
 
         # validate: the parameter h is a hash
         errors << "The parameter h is not a hash" unless h.is_a?(Hash)
+
+        # validate: the parameter h has a key :name
+        errors << "The parameter h does not have a key :name" unless h.has_key?(:name)
+
+        # validate: the parameter h[:name] is a string
+        errors << "The parameter h[:name] is not a string" unless h[:name].is_a?(String)
+
+        # validate: does not exist any other element in @@nodes with the same value for the parameter h[:name]
+        errors << "The parameter h[:name] is not unique" if @@nodes.select{|n| n[:name] == h[:name]}.length > 0 
 
         # validate: the paramerer h has a key :net_remote_ip
         errors << "The parameter h does not have a key :net_remote_ip" unless h.has_key?(:net_remote_ip)
@@ -149,8 +161,6 @@ module BlackStack
     # This class represents a node, without using connection to the database.
     # Use this class at the client side.
     class Node
-      # :name is this is just a descriptive name for the node. It is not the host name, nor the domain, nor any ip. 
-      attr_accessor :name, :net_remote_ip, :ssh_username, :ssh_password, :ssh_port, :ssh_private_key_file
       include NodeModule
     end # class Node
 =begin
