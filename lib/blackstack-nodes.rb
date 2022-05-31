@@ -23,9 +23,6 @@ module BlackStack
         # validate: the parameter h[:name] is a string
         errors << "The parameter h[:name] is not a string" unless h[:name].is_a?(String)
 
-        # validate: does not exist any other element in @@nodes with the same value for the parameter h[:name]
-        errors << "The parameter h[:name] is not unique" if @@nodes.select{|n| n[:name] == h[:name]}.length > 0 
-
         # validate: the paramerer h has a key :net_remote_ip
         errors << "The parameter h does not have a key :net_remote_ip" unless h.has_key?(:net_remote_ip)
 
