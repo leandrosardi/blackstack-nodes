@@ -124,7 +124,7 @@ module BlackStack
         logger.logs 'reboot... '
         #stdout = host.reboot
         begin
-        stdout = host.ssh.exec!("echo '#{host.ssh_password.gsub("'", "\\'")}' | sudo -S su root -c 'reboot'")
+          stdout = self.exec("reboot")
         rescue
         end
         logger.done #logf("done (#{stdout})")
@@ -149,6 +149,7 @@ module BlackStack
         end # while 
         raise 'reboot failed' if !success
       end # def reboot
+
 
     end # module NodeModule
 
