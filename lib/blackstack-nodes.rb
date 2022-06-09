@@ -33,9 +33,6 @@ module BlackStack
         errors << "The parameter h[:ssh_username] is not a string" unless h[:ssh_username].is_a?(String)
 
         # if the parameter h has a key :ssh_private_key_file
-#puts
-#puts
-#puts h[:ssh_private_key_file].nil?
         if h.has_key?(:ssh_private_key_file) && !h[:ssh_private_key_file].nil?
           # validate: the parameter h[:ssh_private_key_file] is a string
           errors << "The parameter h[:ssh_private_key_file] is not a string" unless h[:ssh_private_key_file].is_a?(String)
