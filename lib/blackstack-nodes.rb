@@ -1,4 +1,5 @@
 require 'net/ssh'
+require 'shellwords'
 require 'simple_cloud_logging'
 # 
 module BlackStack
@@ -105,17 +106,27 @@ module BlackStack
       end
 
       def exec(command, sudo=true)
-        s = nil
-        command = command.gsub(/'/, "\\\\'")
+        code = nil
         if sudo
           if self.using_password?
-            s = self.ssh.exec!("echo '#{self.ssh_password.gsub(/'/, "\\\\'")}' | sudo -S su root -c '#{command}'")
+            code = "echo '#{self.ssh_password}' | sudo -S su root -c '#{command}'"
           elsif self.using_private_key_file?
-            s = self.ssh.exec!("sudo -S su root -c '#{command}'")
+            code = "sudo -S su root -c '#{command}'"
           end
         else
-          s = self.ssh.exec!(command)
+          code = command
         end
+#puts
+#puts
+#puts code
+#puts
+#puts
+        s = self.ssh.exec!(code)
+#puts
+#puts
+#puts s
+#puts
+#puts
         s
       end # def exec
 
