@@ -104,19 +104,23 @@ module BlackStack
         self.ssh.close
       end
 
-      def exec(command, sudo=true)
+      def code(command, sudo=true)
         s = nil
         command = command.gsub(/'/, "\\\\'")
         if sudo
           if self.using_password?
-            s = self.ssh.exec!("echo '#{self.ssh_password.gsub(/'/, "\\\\'")}' | sudo -S su root -c '#{command}'")
+            s = "echo '#{self.ssh_password.gsub(/'/, "\\\\'")}' | sudo -S su root -c '#{command}'"
           elsif self.using_private_key_file?
-            s = self.ssh.exec!("sudo -S su root -c '#{command}'")
+            s = "sudo -S su root -c '#{command}'"
           end
         else
-          s = self.ssh.exec!(command)
+          s = command
         end
         s
+      end
+
+      def exec(command, sudo=true)
+        self.ssh.exec!(self.code, sudo)
       end # def exec
 
       def reboot()
