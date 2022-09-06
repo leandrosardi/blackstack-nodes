@@ -1,4 +1,5 @@
 require 'net/ssh'
+require 'shellwords'
 require 'simple_cloud_logging'
 # 
 module BlackStack
@@ -120,7 +121,8 @@ module BlackStack
       end
 
       def exec(command, sudo=true)
-        self.ssh.exec!(self.code, sudo)
+        s = self.ssh.exec!(self.code(command, sudo))
+        s
       end # def exec
 
       def reboot()
