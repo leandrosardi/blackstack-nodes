@@ -107,8 +107,8 @@ module BlackStack
 
       def code(command, sudo=true)
         s = nil
-        command = command.gsub(/'/, "\\\\'")
         if sudo
+          command.gsub!(/'/, "\\\\'")
           if self.using_password?
             s = "echo '#{self.ssh_password.gsub(/'/, "\\\\'")}' | sudo -S su root -c '#{command}'"
           elsif self.using_private_key_file?
@@ -117,6 +117,8 @@ module BlackStack
         else
           s = command
         end
+#puts
+#puts "s: #{s}"
         s
       end
 
