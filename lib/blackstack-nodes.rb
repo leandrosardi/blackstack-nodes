@@ -8,7 +8,7 @@ module BlackStack
     # this module has attributes an methods used by both classes Node and Node.
     module NodeModule
       # :name is this is just a descriptive name for the node. It is not the host name, nor the domain, nor any ip. 
-      attr_accessor :name, :net_remote_ip, :ssh_username, :ssh_password, :ssh_port, :ssh_private_key_file
+      attr_accessor :name, :net_remote_ip, :ssh_username, :ssh_password, :ssh_port, :ssh_private_key_file, :tags
       # non-database attributes, used for ssh connection and logging
       attr_accessor :ssh, :logger
 
@@ -48,6 +48,12 @@ module BlackStack
           errors << "The parameter h[:ssh_password] is not a string" unless h[:ssh_password].is_a?(String)
         end
 
+        # if the parameter h has a key :tags
+        if h.has_key?(:tags) && !h[:tags].nil?
+          # validate: the parameter h[:tags] is an array or a string
+          errors << "The parameter h[:tags] is not an array or a string" unless h[:tags].is_a?(Array) || h[:tags].is_a?(String)
+        end
+
         # return
         errors
       end # def self.descriptor_errors(h)
@@ -63,7 +69,12 @@ module BlackStack
         self.ssh_password = h[:ssh_password] 
         self.ssh_port = h[:ssh_port]
         self.ssh_private_key_file = h[:ssh_private_key_file]
-
+        # parse the tags
+        if h.has_key?(:tags) && !h[:tags].nil?
+          self.tags = h[:tags].is_a?(Array) ? h[:tags] : [h[:tags]]
+        else
+          self.tags = []
+        end
         # create a logger
         self.logger = !i_logger.nil? ? i_logger : BlackStack::BaseLogger.new(nil)
       end # def self.create(h)
@@ -76,6 +87,7 @@ module BlackStack
           :ssh_password => self.ssh_password, 
           :ssh_port => self.ssh_port,
           :ssh_private_key_file => self.ssh_private_key_file,
+          :tags => self.tags
         }
       end # def to_hash
 
