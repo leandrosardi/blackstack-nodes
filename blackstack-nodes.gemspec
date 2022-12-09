@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'blackstack-nodes'
-  s.version     = '1.2.10'
-  s.date        = '2022-09-07'
+  s.version     = '1.2.11'
+  s.date        = '2022-12-09'
   s.summary     = "BlackStack Nodes is a simple library to managing a computer remotely via SSH, and perform some common operations."
   s.description = "BlackStack Nodes is a simple library to managing a computer remotely via SSH, and perform some common operations.
 This library is used and extended by many others like: 

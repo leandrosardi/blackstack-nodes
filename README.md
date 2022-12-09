@@ -90,7 +90,7 @@ The log of this command will be something like this:
 2022-05-30 15:38:29:  > connecting (try 3)... done
 ```
 
-## 3. Connecting a Node Using Password
+## 4. Connecting a Node Using Password
 
 ```ruby
 # Example script of connecting to a server using ssh user and password; requesting server reboot; and waiting for server is up again.
@@ -124,4 +124,38 @@ logger.logs 'Disconnecting from node... '
 n.disconnect
 # => nil
 logger.done
+```
+
+## 5. Tagging Nodes
+
+Some other gems like [BlackStack Deployer](https://github.com/leandrosardi/blackstack-deployer) or [Pampa](https://github.com/leandrosardi/pampa) use to manage tags in order to know which processes should they run on each node.
+
+Add a `:tags` entry to the node descriptor, in order to it.
+
+```ruby
+n = BlackStack::Infrastructure::Node.new(
+    {
+        :net_remote_ip => '54.160.137.218',  
+        :ssh_username => 'ubuntu',
+        :ssh_port => 22,
+        :ssh_private_key_file => './plank.pem',
+        :tags => 'webserver'
+    }, 
+    logger
+)
+```
+
+You can define more than one tag.
+
+```ruby
+n = BlackStack::Infrastructure::Node.new(
+    {
+        :net_remote_ip => '54.160.137.218',  
+        :ssh_username => 'ubuntu',
+        :ssh_port => 22,
+        :ssh_private_key_file => './plank.pem',
+        :tags => ['webserver', 'payments-processing']
+    }, 
+    logger
+)
 ```
