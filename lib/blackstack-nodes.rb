@@ -129,13 +129,12 @@ module BlackStack
         else
           s = command
         end
-#puts
-#puts "s: #{s}"
         s
       end
 
       def exec(command, sudo=true)
-        s = self.ssh.exec!(self.code(command, sudo))
+        code = self.code(command, sudo)
+        s = self.ssh.exec!(code)
         s
       end # def exec
 
@@ -175,6 +174,57 @@ module BlackStack
         raise 'reboot failed' if !success
       end # def reboot
 
+      # Return a hash descriptor of the status of the node
+      def usage()
+        ret = {}
+
+        self.connect
+
+        ret[:b_total_memory] = self.ssh.exec!('cat /proc/meminfo | grep MemTotal').delete('^0-9').to_i*1024
+        ret[:kb_total_memory] = ret[:b_total_memory] / 1024
+        ret[:mb_total_memory] = ret[:kb_total_memory] / 1024
+        ret[:gb_total_memory] = ret[:mb_total_memory] / 1024
+
+        ret[:kb_free_memory] = self.ssh.exec!('cat /proc/meminfo | grep MemFree').delete('^0-9').to_i
+        ret[:mb_free_memory] = ret[:kb_free_memory] / 1024
+        ret[:gb_free_memory] = ret[:mb_free_memory] / 1024
+
+        # run bash commend to get the total disk space
+        ret[:mb_total_disk] = self.ssh.exec!('df -m / | tail -1 | awk \'{print $2}\'').to_i
+        ret[:gb_total_disk] = ret[:mb_total_disk] / 1024
+        # run bash command to get the free disk space
+        ret[:mb_free_disk] = self.ssh.exec!('df -m / | tail -1 | awk \'{print $4}\'').to_i
+        ret[:gb_free_disk] = ret[:mb_free_disk] / 1024
+        
+        # run bash command to get hostname
+        ret[:hostname] = self.ssh.exec!('hostname').strip!
+
+        # run bash command to get the CPU load
+        # reference: https://stackoverflow.com/questions/9229333/how-to-get-overall-cpu-usage-e-g-57-on-linux
+        ret[:cpu_load_average] = self.ssh.exec!("awk '{u=$2+$4; t=$2+$4+$5; if (NR==1){u1=u; t1=t;} else print ($2+$4-u1) * 100 / (t-t1) \"%\"; }' <(grep 'cpu ' /proc/stat) <(sleep 1;grep 'cpu ' /proc/stat)").to_s
+
+        # TODO: monitor the overall Network I/O load
+
+        # TODO: monitor the overall Disk I/O load
+
+        # mapping cpu status
+        ret[:cpu_architecture] = self.ssh.exec!('lscpu | grep Architecture').split(':')[1].strip!
+        ret[:cpu_speed] = self.ssh.exec!('lscpu | grep "CPU MHz:"').split(':')[1].strip!.to_f.round
+        #ret[:cpu_model] = self.ssh.exec!('lscpu | grep "Model"').split(':')[1].strip!
+        #ret[:cpu_type] = ret[:cpu_model].split(' ')[0]
+        ret[:cpu_number] = self.ssh.exec!('lscpu | grep "^CPU(s):"').split(':')[1].strip!.to_i
+
+        # mapping disk status
+        #self.disk_total = mb_total_disk.to_i
+        #self.disk_free = mb_free_disk.to_i
+
+        # mapping lan attributes
+        ret[:net_mac_address] = self.ssh.exec!('ifconfig | grep ether').split[1].upcase.strip.gsub(':', '-') 
+
+        self.disconnect
+
+        ret
+      end # def usage
 
     end # module NodeModule
 
