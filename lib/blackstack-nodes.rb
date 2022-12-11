@@ -226,6 +226,14 @@ module BlackStack
         ret
       end # def usage
 
+      # return the latest `n`` lines of the file specified by the `filename` parameter
+      def tail(filename, n=10)
+        self.connect
+        s = self.ssh.exec!("tail -n #{n.to_s} #{filename}")
+        self.disconnect
+        s
+      end
+
     end # module NodeModule
 
     # TODO: declare these classes (stub and skeleton) using blackstack-rpc
