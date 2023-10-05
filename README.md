@@ -8,7 +8,15 @@ This library is used and extended by many others like:
 - [Simple Proxies Monitoring](https://github.com/leandrosardi/simple_proxies_deploying)
 - [Simple Hosts Monitoring](https://github.com/leandrosardi/simple_host_monitoring)
 
-## 1. Getting Started
+**Outline**
+
+- 1. [Installation](#1-installation)
+- 2. [Getting Started](#2-getting-started)
+- 3. [Using Private-Keys](#3-using-private-keys)
+- 4. [Rebooting Nodes](#4-rebooting-nodes)
+- 5. [Logging](#5-logging)
+
+## 1. Installation
 
 Install the gem.
 
@@ -16,64 +24,104 @@ Install the gem.
 gem install blackstack-nodes
 ```
 
-## 2. Connecting a Node Using Private-Key Files
+## 2. Getting Started
 
 ```ruby
-# Example script of connecting to an AWS/EC2 instance using a key file; and running a command.
+require 'simple_cloud_logging'
 
-require_relative '../lib/blackstack-deployer'
-n = BlackStack::Infrastructure::Node.new(
-    :net_remote_ip => '54.160.137.218',  
-    :ssh_username => 'ubuntu',
+n = BlackStack::Infrastructure::Node.new({
+    :net_remote_ip => '81.28.96.103',  
+    :ssh_username => 'root',
     :ssh_port => 22,
-    :ssh_private_key_file => './plank.pem',
-)
-# => BlackStack::Infrastructure::RemoteNode
+    :ssh_password => '****',
+})
+# => BlackStack::Infrastructure::Node
 
 n.connect
 # => n.ssh
 
 puts n.exec('hostname')
-# => 'ip-172-31-21-6'
+# => 'dev1'
 
 n.disconnect
 # => nil
 ```
 
-## 3. Rebooting a Node and Waiting it to Get Back
+## 3. Using Private-Keys
 
 ```ruby
-# Example script of connecting to an AWS/EC2 instance using a key file; requesting server reboot; and waiting for server is up again.
-
 require 'simple_cloud_logging'
-require_relative '../lib/blackstack-deployer'
 
-logger = BlackStack::BaseLogger.new(nil)
+n = BlackStack::Infrastructure::Node.new({
+    :net_remote_ip => '54.160.137.218',  
+    :ssh_username => 'ubuntu',
+    :ssh_port => 22,
+    :ssh_private_key_file => './plank.pem',
+})
+# => BlackStack::Infrastructure::Node
 
-n = BlackStack::Infrastructure::Node.new(
-    {
-        :net_remote_ip => '54.160.137.218',  
-        :ssh_username => 'ubuntu',
-        :ssh_port => 22,
-        :ssh_private_key_file => './plank.pem',
-    }, 
-    logger
-)
-# => BlackStack::Infrastructure::RemoteNode
-
-logger.logs 'Connecting to node... '
 n.connect
 # => n.ssh
-logger.done
 
-logger.logs 'Rebooting node... '
-puts n.reboot
-logger.done
+puts n.exec('hostname')
+# => 'dev1'
 
-logger.logs 'Disconnecting from node... '
 n.disconnect
 # => nil
-logger.done
+```
+
+## 4. Rebooting Nodes
+
+Use the `reboot` method for not only reboot the node, but wait for it to get back too.
+
+```ruby
+require 'simple_cloud_logging'
+
+n = BlackStack::Infrastructure::Node.new({
+    :net_remote_ip => '54.160.137.218',  
+    :ssh_username => 'ubuntu',
+    :ssh_port => 22,
+    :ssh_private_key_file => './plank.pem',
+})
+# => BlackStack::Infrastructure::RemoteNode
+
+n.connect
+# => n.ssh
+
+puts n.reboot # your code will remiains here until the node is get again.
+# => nil
+
+n.disconnect
+# => nil
+```
+
+## 5. Logging
+
+You can integrate **blackstack-nodes** our other **[simple_cloud_logging](https://github.com/leandrosardi/simple_cloud_logging)** gem.
+
+**Example:**
+
+```ruby
+require 'simple_cloud_logging'
+
+logger = BlackStack::LocalLogger.new('./example.log')
+
+n = BlackStack::Infrastructure::Node.new({
+    :net_remote_ip => '54.160.137.218',  
+    :ssh_username => 'ubuntu',
+    :ssh_port => 22,
+    :ssh_private_key_file => './plank.pem',
+}, logger)
+# => BlackStack::Infrastructure::RemoteNode
+
+n.connect
+# => n.ssh
+
+puts n.reboot # your code will remiains here until the node is get again.
+# => nil
+
+n.disconnect
+# => nil
 ```
 
 The log of this command will be something like this:
@@ -90,72 +138,18 @@ The log of this command will be something like this:
 2022-05-30 15:38:29:  > connecting (try 3)... done
 ```
 
-## 4. Connecting a Node Using Password
+## Versioning
 
-```ruby
-# Example script of connecting to a server using ssh user and password; requesting server reboot; and waiting for server is up again.
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the last [ruby gem](https://rubygems.org/gems/simple_command_line_parser). 
 
-require 'simple_cloud_logging'
-require_relative '../lib/blackstack-deployer'
+## Authors
 
-logger = BlackStack::BaseLogger.new(nil)
+* **Leandro Daniel Sardi** - *Initial work* - [LeandroSardi](https://github.com/leandrosardi)
 
-n = BlackStack::Infrastructure::Node.new(
-    {
-        :net_remote_ip => '81.28.96.103',  
-        :ssh_username => 'root',
-        :ssh_port => 22,
-        :ssh_password => '****',
-    }, 
-    logger
-)
-# => BlackStack::Infrastructure::RemoteNode
+## License
 
-logger.logs 'Connecting to node... '
-n.connect
-# => n.ssh
-logger.done
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-logger.logs 'Rebooting node... '
-puts n.reboot
-logger.done
+## Further Work
 
-logger.logs 'Disconnecting from node... '
-n.disconnect
-# => nil
-logger.done
-```
-
-## 5. Tagging Nodes
-
-Some other gems like [BlackStack Deployer](https://github.com/leandrosardi/blackstack-deployer) or [Pampa](https://github.com/leandrosardi/pampa) use to manage tags in order to know which processes should they run on each node.
-
-Add a `:tags` entry to the node descriptor, in order to it.
-
-```ruby
-n = BlackStack::Infrastructure::Node.new(
-    {
-        :net_remote_ip => '54.160.137.218',  
-        :ssh_username => 'ubuntu',
-        :ssh_port => 22,
-        :ssh_private_key_file => './plank.pem',
-        :tags => 'webserver'
-    }, 
-    logger
-)
-```
-
-You can define more than one tag.
-
-```ruby
-n = BlackStack::Infrastructure::Node.new(
-    {
-        :net_remote_ip => '54.160.137.218',  
-        :ssh_username => 'ubuntu',
-        :ssh_port => 22,
-        :ssh_private_key_file => './plank.pem',
-        :tags => ['webserver', 'payments-processing']
-    }, 
-    logger
-)
-```
+Nothing yet.
