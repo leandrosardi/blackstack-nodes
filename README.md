@@ -10,12 +10,12 @@ This library is used and extended by many others like:
 
 **Outline**
 
-- 1. [Installation](#1-installation)
-- 2. [Getting Started](#2-getting-started)
-- 3. [Using Private-Keys](#3-using-private-keys)
-- 4. [Rebooting Nodes](#4-rebooting-nodes)
-- 5. [Logging](#5-logging)
-- 6. [Usage](#6-monitoring)
+1. [Installation](#1-installation)
+2. [Getting Started](#2-getting-started)
+3. [Using Private-Keys](#3-using-private-keys)
+4. [Rebooting Nodes](#4-rebooting-nodes)
+5. [Logging](#5-logging)
+6. [Usage](#6-monitoring)
 
 ## 1. Installation
 
