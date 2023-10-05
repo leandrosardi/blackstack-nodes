@@ -228,10 +228,7 @@ module BlackStack
 
       # return the latest `n`` lines of the file specified by the `filename` parameter
       def tail(filename, n=10)
-        self.connect
-        s = self.ssh.exec!("tail -n #{n.to_s} #{filename}")
-        self.disconnect
-        s
+        self.ssh.exec!("tail -n #{n.to_s} #{filename}")
       end
 
     end # module NodeModule
