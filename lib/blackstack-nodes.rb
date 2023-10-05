@@ -178,7 +178,7 @@ module BlackStack
       def usage()
         ret = {}
 
-        self.connect
+        #self.connect
 
         ret[:b_total_memory] = self.ssh.exec!('cat /proc/meminfo | grep MemTotal').delete('^0-9').to_i*1024
         ret[:kb_total_memory] = ret[:b_total_memory] / 1024
@@ -221,7 +221,7 @@ module BlackStack
         # mapping lan attributes
         ret[:net_mac_address] = self.ssh.exec!('ifconfig | grep ether').split[1].upcase.strip.gsub(':', '-') 
 
-        self.disconnect
+        #self.disconnect
 
         ret
       end # def usage

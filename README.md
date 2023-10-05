@@ -15,6 +15,7 @@ This library is used and extended by many others like:
 - 3. [Using Private-Keys](#3-using-private-keys)
 - 4. [Rebooting Nodes](#4-rebooting-nodes)
 - 5. [Logging](#5-logging)
+- 6. [Usage](#6-monitoring)
 
 ## 1. Installation
 
@@ -136,6 +137,31 @@ The log of this command will be something like this:
 2022-05-30 15:38:11:  > connecting (try 2)... No se puede establecer una conexi¾n ya que el equipo de destino deneg¾ expresamente dicha conexi¾n. - connect(2) for 81.28.96.103:22
 2022-05-30 15:38:19:  > wait 10 seconds... done
 2022-05-30 15:38:29:  > connecting (try 3)... done
+```
+
+## 6. Monitoring
+
+You can remotely monitor the usage of memory, CPU and disk space of a node.
+
+```ruby
+require 'simple_cloud_logging'
+
+n = BlackStack::Infrastructure::Node.new({
+    :net_remote_ip => '54.160.137.218',  
+    :ssh_username => 'ubuntu',
+    :ssh_port => 22,
+    :ssh_private_key_file => './plank.pem',
+})
+# => BlackStack::Infrastructure::RemoteNode
+
+n.connect
+# => n.ssh
+
+puts n.usage
+# => { :gb_total_memory => ..., :gb_free_memory => ..., ... }
+
+n.disconnect
+# => nil
 ```
 
 ## Versioning
