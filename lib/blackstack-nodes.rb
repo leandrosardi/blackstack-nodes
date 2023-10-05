@@ -76,7 +76,7 @@ module BlackStack
           self.tags = []
         end
         # create a logger
-        self.logger = !i_logger.nil? ? i_logger : BlackStack::BaseLogger.new(nil)
+        self.logger = !i_logger.nil? ? i_logger : BlackStack::DummyLogger.new(nil)
       end # def self.create(h)
 
       def to_hash
