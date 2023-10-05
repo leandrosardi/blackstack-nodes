@@ -15,7 +15,7 @@ This library is used and extended by many others like:
 3. [Using Private-Keys](#3-using-private-keys)
 4. [Rebooting Nodes](#4-rebooting-nodes)
 5. [Logging](#5-logging)
-6. [Usage](#6-monitoring)
+6. [Monitoring](#6-monitoring)
 
 ## 1. Installation
 
