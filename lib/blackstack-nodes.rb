@@ -117,26 +117,30 @@ module BlackStack
         self.ssh.close
       end
 
-      def code(command, sudo=true)
-        s = nil
-        if sudo
-          command.gsub!(/'/, "\\\\'")
-          if self.using_password?
-            s = "echo '#{self.ssh_password.gsub(/'/, "\\\\'")}' | sudo -S su root -c '#{command}'"
-          elsif self.using_private_key_file?
-            s = "sudo -S su root -c '#{command}'"
-          end
-        else
-          s = command
-        end
-        s
-      end
+      def exec(
+        command, 
+        output_file: "~/bash-command-stdout-buffer", 
+        error_file: "~/bash-command-stderr-buffer"
+      )
+        # Construct the remote command with redirection for stdout and stderr
+        remote_command = "#{command} > #{output_file} 2> #{error_file}"
 
-      def exec(command, sudo=true)
-        code = self.code(command, sudo)
-        s = self.ssh.exec!(code)
-        s
-      end # def exec
+        # Execute the command on the remote server
+        self.ssh.exec!("truncate -s 0 #{output_file} #{error_file} && #{remote_command}")
+
+        # Retrieve the content of the error file from the remote server
+        error_content = self.ssh.exec!("cat #{error_file}").to_s.chomp
+
+        # Check if the error file has any content
+        unless error_content.empty?
+          # Raise an exception with the error message
+          raise "Command failed with the following error:\n#{error_content}"
+        end
+
+        # Retrieve and return the content of the output file from the remote server
+        # truncate any last newline character
+        self.ssh.exec!("cat #{output_file}").to_s.chomp
+      end
 
       def reboot()
         tries = 0
@@ -241,13 +245,5 @@ module BlackStack
     class Node
       include NodeModule
     end # class Node
-=begin
-    # Node Skeleton
-    # This class represents a node, with connection to the database.
-    # Use this class at the server side.
-    class Node < Sequel::Model(:node)
-      include NodeModule
-    end
-=end
   end # module Infrastructure
 end # module BlackStack
