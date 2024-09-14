@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'blackstack-nodes'
-  s.version     = '1.2.12'
-  s.date        = '2022-12-11'
+  s.version     = '1.2.14'
+  s.date        = '2024-09-13'
   s.summary     = "BlackStack Nodes is a simple library to managing a computer remotely via SSH, and perform some common operations."
   s.description = "BlackStack Nodes is a simple library to managing a computer remotely via SSH, and perform some common operations.
 This library is used and extended by many others like: 
@@ -17,6 +17,6 @@ This library is used and extended by many others like:
   ]
   s.homepage    = 'https://github.com/leandrosardi/blackstack-nodes'
   s.license     = 'MIT'
-  s.add_runtime_dependency 'net-ssh', '~> 6.1.0', '>= 6.1.0'
-  s.add_runtime_dependency 'simple_cloud_logging', '~> 1.2.2', '>= 1.2.2'
+  s.add_runtime_dependency 'net-ssh', '~> 6.1.0'
+  s.add_runtime_dependency 'simple_cloud_logging', '~> 1.2.2'
 end
