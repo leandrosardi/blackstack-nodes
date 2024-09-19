@@ -117,31 +117,44 @@ module BlackStack
         self.ssh.close
       end
 
+      # Execute a command on the remote server and return the output.
+      # If the exit code of the command is not zero, an exception is raised, with the messages pushed into the stderr.
+      # If the exit code of the command is zero, the messages pushed into the stdout are returned.
+      # 
+      # IMPORTANT: Messages pushed into stderr re not always error.
+      # Reference:
+      # - How to stop git from writing non-errors to stderr ?
+      # - https://stackoverflow.com/questions/57016157/how-to-stop-git-from-writing-non-errors-to-stderr
+      #
       def exec(
         command, 
         output_file: "~/bash-command-stdout-buffer", 
-        error_file: "~/bash-command-stderr-buffer"
+        error_file: "~/bash-command-stderr-buffer",
+        exit_code_file: "~/bash-command-exit-code"
       )
-        # Construct the remote command with redirection for stdout and stderr
-        remote_command = "#{command} > #{output_file} 2> #{error_file}"
-
-        # Execute the command on the remote server
-        self.ssh.exec!("truncate -s 0 #{output_file} #{error_file} && #{remote_command}")
-
+        # Construct the remote command with redirection for stdout, stderr, and capturing exit code
+        remote_command = "#{command} > #{output_file} 2> #{error_file}; echo $? > #{exit_code_file}"
+        
+        # Execute the command on the remote server, truncating output, error, and exit code files
+        self.ssh.exec!("truncate -s 0 #{output_file} #{error_file} #{exit_code_file} && #{remote_command}")
+      
+        # Retrieve the exit code
+        exit_code = self.ssh.exec!("cat #{exit_code_file}").to_s.chomp.to_i
+      
         # Retrieve the content of the error file from the remote server
         error_content = self.ssh.exec!("cat #{error_file}").to_s.chomp
-
-        # Check if the error file has any content
-        unless error_content.empty?
+      
+        # Check if the exit code is not zero
+        if exit_code != 0
           # Raise an exception with the error message
-          raise "Command failed with the following error:\n#{error_content}"
+          raise "Command failed with exit code #{exit_code}:\n#{error_content}"
         end
-
+      
         # Retrieve and return the content of the output file from the remote server
-        # truncate any last newline character
+        # Truncate any trailing newline character
         self.ssh.exec!("cat #{output_file}").to_s.chomp
-      end
-
+      end # def exec
+      
       def reboot()
         tries = 0
         max_tries = 20
