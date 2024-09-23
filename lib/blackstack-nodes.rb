@@ -128,16 +128,19 @@ module BlackStack
       #
       def exec(
         command, 
-        output_file: "~/.bash-command-stdout-buffer", 
-        error_file: "~/.bash-command-stderr-buffer",
-        exit_code_file: "~/.bash-command-exit-code"
+        output_file: "$HOME/.bash-command-stdout-buffer", 
+        error_file: "$HOME/.bash-command-stderr-buffer",
+        exit_code_file: "$HOME/.bash-command-exit-code"
       )
         # Construct the remote command with redirection for stdout, stderr, and capturing exit code
         remote_command = "#{command} > #{output_file} 2> #{error_file}; echo $? > #{exit_code_file}"
-        
+
         # Execute the command on the remote server, truncating output, error, and exit code files
-        self.ssh.exec!("truncate -s 0 #{output_file} #{error_file} #{exit_code_file} && #{remote_command}")
-      
+        self.ssh.exec!("truncate -s 0 #{output_file} #{error_file} #{exit_code_file}")
+
+        # Execute the command on the remote server, truncating output, error, and exit code files
+        self.ssh.exec!(remote_command)
+
         # Retrieve the exit code
         exit_code = self.ssh.exec!("cat #{exit_code_file}").to_s.chomp.to_i
       
