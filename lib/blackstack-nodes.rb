@@ -8,7 +8,7 @@ module BlackStack
     # this module has attributes an methods used by both classes Node and Node.
     module NodeModule
       # :name is this is just a descriptive name for the node. It is not the host name, nor the domain, nor any ip. 
-      attr_accessor :name, :net_remote_ip, :ssh_username, :ssh_password, :ssh_port, :ssh_private_key_file, :tags
+      attr_accessor :name, :ip, :ssh_username, :ssh_password, :ssh_port, :ssh_private_key_file, :tags
       # non-database attributes, used for ssh connection and logging
       attr_accessor :ssh, :logger
 
@@ -24,8 +24,8 @@ module BlackStack
         # validate: the parameter h[:name] is a string
         errors << "The parameter h[:name] is not a string" unless h[:name].is_a?(String)
 
-        # validate: the paramerer h has a key :net_remote_ip
-        errors << "The parameter h does not have a key :net_remote_ip" unless h.has_key?(:net_remote_ip)
+        # validate: the paramerer h has a key :ip
+        errors << "The parameter h does not have a key :ip" unless h.has_key?(:ip)
 
         # validate: the paramerer h has a key :ssh_username
         errors << "The parameter h does not have a key :ssh_username" unless h.has_key?(:ssh_username)
@@ -64,7 +64,7 @@ module BlackStack
         raise "The node descriptor is not valid: #{errors.uniq.join(".\n")}" if errors.length > 0
         # map attributes
         self.name = h[:name]
-        self.net_remote_ip = h[:net_remote_ip]
+        self.ip = h[:ip]
         self.ssh_username = h[:ssh_username]
         self.ssh_password = h[:ssh_password] 
         self.ssh_port = h[:ssh_port]
@@ -82,7 +82,7 @@ module BlackStack
       def to_hash
         {
           :name => self.name,
-          :net_remote_ip => self.net_remote_ip,
+          :ip => self.ip,
           :ssh_username => self.ssh_username,
           :ssh_password => self.ssh_password, 
           :ssh_port => self.ssh_port,
@@ -93,20 +93,20 @@ module BlackStack
 
       # return true if the node is all set to connect using ssh user and password.
       def using_password?
-        !self.net_remote_ip.nil? && !self.ssh_username.nil? && !self.ssh_password.nil?
+        !self.ip.nil? && !self.ssh_username.nil? && !self.ssh_password.nil?
       end
 
       # return true if the node is all set to connect using a private key file.
       def using_private_key_file?
-        !self.net_remote_ip.nil? && !self.ssh_username.nil? && !self.ssh_private_key_file.nil?
+        !self.ip.nil? && !self.ssh_username.nil? && !self.ssh_private_key_file.nil?
       end
 
       def connect
         # connect
         if self.using_password?
-          self.ssh = Net::SSH.start(self.net_remote_ip, self.ssh_username, :password => self.ssh_password, :port => self.ssh_port)
+          self.ssh = Net::SSH.start(self.ip, self.ssh_username, :password => self.ssh_password, :port => self.ssh_port)
         elsif self.using_private_key_file?
-          self.ssh = Net::SSH.start(self.net_remote_ip, self.ssh_username, :keys => self.ssh_private_key_file, :port => self.ssh_port)
+          self.ssh = Net::SSH.start(self.ip, self.ssh_username, :keys => self.ssh_private_key_file, :port => self.ssh_port)
         else
           raise "No ssh credentials available"
         end

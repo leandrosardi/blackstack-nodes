@@ -7,7 +7,7 @@ logger = BlackStack::BaseLogger.new(nil)
 
 n = BlackStack::Infrastructure::Node.new(
     {
-        :net_remote_ip => '54.160.137.218',  
+        :ip => '54.160.137.218',  
         :ssh_username => 'ubuntu',
         :ssh_port => 22,
         :ssh_private_key_file => './plank.pem',

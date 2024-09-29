@@ -7,7 +7,7 @@ logger = BlackStack::BaseLogger.new(nil)
 
 n = BlackStack::Infrastructure::Node.new(
     {
-        :net_remote_ip => '81.28.96.103',  
+        :ip => '81.28.96.103',  
         :ssh_username => 'root',
         :ssh_port => 22,
         :ssh_password => '****',
