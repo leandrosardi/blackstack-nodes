@@ -32,7 +32,7 @@ gem install blackstack-nodes
 require 'simple_cloud_logging'
 
 n = BlackStack::Infrastructure::Node.new({
-    :net_remote_ip => '81.28.96.103',  
+    :ip => '81.28.96.103',  
     :ssh_username => 'root',
     :ssh_port => 22,
     :ssh_password => '****',
@@ -55,7 +55,7 @@ n.disconnect
 require 'simple_cloud_logging'
 
 n = BlackStack::Infrastructure::Node.new({
-    :net_remote_ip => '54.160.137.218',  
+    :ip => '54.160.137.218',  
     :ssh_username => 'ubuntu',
     :ssh_port => 22,
     :ssh_private_key_file => './plank.pem',
@@ -80,7 +80,7 @@ Use the `reboot` method for not only reboot the node, but wait for it to get bac
 require 'simple_cloud_logging'
 
 n = BlackStack::Infrastructure::Node.new({
-    :net_remote_ip => '54.160.137.218',  
+    :ip => '54.160.137.218',  
     :ssh_username => 'ubuntu',
     :ssh_port => 22,
     :ssh_private_key_file => './plank.pem',
@@ -109,7 +109,7 @@ require 'simple_cloud_logging'
 logger = BlackStack::LocalLogger.new('./example.log')
 
 n = BlackStack::Infrastructure::Node.new({
-    :net_remote_ip => '54.160.137.218',  
+    :ip => '54.160.137.218',  
     :ssh_username => 'ubuntu',
     :ssh_port => 22,
     :ssh_private_key_file => './plank.pem',
@@ -148,7 +148,7 @@ You can remotely monitor the usage of memory, CPU and disk space of a node.
 require 'simple_cloud_logging'
 
 n = BlackStack::Infrastructure::Node.new({
-    :net_remote_ip => '54.160.137.218',  
+    :ip => '54.160.137.218',  
     :ssh_username => 'ubuntu',
     :ssh_port => 22,
     :ssh_private_key_file => './plank.pem',
@@ -173,7 +173,7 @@ You can remotely watch a log file of a node.
 require 'simple_cloud_logging'
 
 n = BlackStack::Infrastructure::Node.new({
-    :net_remote_ip => '54.160.137.218',  
+    :ip => '54.160.137.218',  
     :ssh_username => 'ubuntu',
     :ssh_port => 22,
     :ssh_private_key_file => './plank.pem',
