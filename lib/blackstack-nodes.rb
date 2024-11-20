@@ -104,7 +104,16 @@ module BlackStack
       def connect
         # connect
         if self.using_password?
-          self.ssh = Net::SSH.start(self.ip, self.ssh_username, :password => self.ssh_password, :port => self.ssh_port)
+          self.ssh = Net::SSH.start(
+            self.ip, 
+            self.ssh_username, 
+            :password => self.ssh_password, 
+            :port => self.ssh_port,
+            :verify_host_key => :never,       # Disable host key verification
+            :non_interactive => true,         # Ensure non-interactive mode
+            :timeout => 10,                   # Set a connection timeout (in seconds)
+            #:verbose => :debug                   # Enable verbose logging
+          )
         elsif self.using_private_key_file?
           self.ssh = Net::SSH.start(self.ip, self.ssh_username, :keys => self.ssh_private_key_file, :port => self.ssh_port)
         else
