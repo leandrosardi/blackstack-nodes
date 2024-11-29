@@ -101,6 +101,17 @@ module BlackStack
         !self.ip.nil? && !self.ssh_username.nil? && !self.ssh_private_key_file.nil?
       end
 
+      # Returns true if the SSH connection is not established or inactive
+      def disconnected?
+        self.ssh.nil? || self.ssh.closed?
+      end
+
+      # Returns true if the SSH connection is established
+      def connected?
+        !disconnected?
+      end
+
+      # 
       def connect
         # connect
         if self.using_password?
